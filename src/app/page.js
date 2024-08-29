@@ -20,34 +20,32 @@ export default function Home() {
     return /Mobi|Android/i.test(navigator.userAgent);
   };
 
-  const showChromeNotification = async (windowTitle, header, details) => {
-    const playSound = () => {
-      const audio = new Audio("/sounds/happy-bells.wav");
+  const playSound = () => {
+    const audio = new Audio("/sounds/happy-bells.wav");
 
-      if (isMobileBrowser()) {
-        let playCount = 0;
-        const maxPlays = 2;
+    if (isMobileBrowser()) {
+      let playCount = 0;
+      const maxPlays = 2;
 
-        audio.loop = true;
-
-        audio.addEventListener("ended", () => {
-          playCount += 1;
-          if (playCount >= maxPlays) {
-            audio.pause();
-            audio.currentTime = 0; // Reset the audio
-          }
-        });
-      } else {
-        audio.loop = true;
-      }
-
-      audio.play().catch((error) => {
-        console.error("Sound playback was blocked:", error);
+      audio.addEventListener("ended", () => {
+        playCount += 1;
+        if (playCount < maxPlays) {
+          audio.currentTime = 0; // Reset the audio
+          audio.play(); // Play the sound again
+        }
       });
+    } else {
+      audio.loop = true;
+    }
 
-      return audio; // Return the audio object to control it later
-    };
+    audio.play().catch((error) => {
+      console.error("Sound playback was blocked:", error);
+    });
 
+    return audio; // Return the audio object to control it later
+  };
+
+  const showChromeNotification = async (windowTitle, header, details) => {
     const permission = await requestNotificationPermission();
     if (permission === "granted") {
       const audio = playSound(); // Start playing sound and get the audio object
@@ -67,18 +65,20 @@ export default function Home() {
         notificationOptions
       );
 
-      // Stop audio when notification is clicked
-      notification.onclick = () => {
-        audio.pause();
-        audio.currentTime = 0; // Reset the audio
-        notification.close(); // Close the notification
-      };
+      if (!isMobileBrowser()) {
+        // Stop audio when notification is clicked (only on desktop)
+        notification.onclick = () => {
+          audio.pause();
+          audio.currentTime = 0; // Reset the audio
+          notification.close(); // Close the notification
+        };
 
-      // Stop audio when notification is closed manually
-      notification.onclose = () => {
-        audio.pause();
-        audio.currentTime = 0; // Reset the audio
-      };
+        // Stop audio when notification is closed manually (only on desktop)
+        notification.onclose = () => {
+          audio.pause();
+          audio.currentTime = 0; // Reset the audio
+        };
+      }
     } else if (permission === "denied") {
       alert("***Notification permissions have been denied...!!***");
     } else {
