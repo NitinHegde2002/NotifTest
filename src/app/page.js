@@ -1,95 +1,79 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import React, { useEffect, useCallback } from "react";
 
 export default function Home() {
+  const requestNotificationPermission = useCallback(() => {
+    return new Promise((resolve) => {
+      if (Notification.permission === "granted") {
+        resolve("granted");
+      } else if (Notification.permission === "denied") {
+        resolve("denied");
+      } else {
+        Notification.requestPermission().then((permission) => {
+          resolve(permission);
+        });
+      }
+    });
+  }, []);
+
+  const showChromeNotification = async (windowTitle, header, details) => {
+    const playSound = () => {
+      const audio = new Audio("/sounds/happy-bells.wav");
+      audio.loop = true; // Loop the audio
+      audio.play().catch((error) => {
+        console.error("Sound playback was blocked:", error);
+      });
+
+      return audio; // Return the audio object to control it later
+    };
+
+    const permission = await requestNotificationPermission();
+    if (permission === "granted") {
+      const audio = playSound(); // Start playing sound and get the audio object
+
+      const notification = new Notification(`${windowTitle} : ${header}`, {
+        body: details,
+        icon: "/images/notiflogo.ico",
+        requireInteraction: true, // Keeps the notification on screen until user interacts
+      });
+
+      // Stop audio when notification is clicked
+      notification.onclick = () => {
+        audio.pause();
+        audio.currentTime = 0; // Reset the audio
+        notification.close(); // Close the notification
+      };
+
+      // Stop audio when notification is closed manually
+      notification.onclose = () => {
+        audio.pause();
+        audio.currentTime = 0; // Reset the audio
+      };
+    } else if (permission === "denied") {
+      alert("***Notification permissions have been denied...!!***");
+    } else {
+      alert("Notification permissions have not been granted.");
+    }
+  };
+
+  useEffect(() => {
+    // Request notification permission when the component mounts
+    requestNotificationPermission();
+  }, [requestNotificationPermission]);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <div>
+      <button
+        onClick={() =>
+          showChromeNotification(
+            "MobiGuest",
+            "Dining Order",
+            "There is an order from room 314 and ordered 6578"
+          )
+        }
+      >
+        Notify me!
+      </button>
+    </div>
   );
 }
