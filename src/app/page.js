@@ -93,6 +93,7 @@ export default function Home() {
 
   return (
     <div>
+      <p>with changes for mobile.. testing-1</p>
       <button
         onClick={() =>
           showChromeNotification(
