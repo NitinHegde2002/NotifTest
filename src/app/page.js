@@ -23,7 +23,7 @@ export default function Home() {
   const playSound = () => {
     const audio = new Audio("/sounds/happy-bells.wav");
 
-    if (isMobileBrowser()) {
+    /*  if (isMobileBrowser()) {
       let playCount = 0;
       const maxPlays = 2;
 
@@ -34,9 +34,9 @@ export default function Home() {
           audio.play(); // Play the sound again
         }
       });
-    } else {
-      audio.loop = true;
-    }
+   } else { */
+    audio.loop = true;
+    // }
 
     audio.play().catch((error) => {
       console.error("Sound playback was blocked:", error);
@@ -56,29 +56,29 @@ export default function Home() {
       };
 
       // Modify notification for desktop browsers
-      if (!isMobileBrowser()) {
-        notificationOptions.requireInteraction = true; // Keeps the notification on screen until user interacts
-      }
+      // if (!isMobileBrowser()) {
+      notificationOptions.requireInteraction = true; // Keeps the notification on screen until user interacts
+      // }
 
       const notification = new Notification(
         `${windowTitle} : ${header}`,
         notificationOptions
       );
 
-      if (!isMobileBrowser()) {
-        // Stop audio when notification is clicked (only on desktop)
-        notification.onclick = () => {
-          audio.pause();
-          audio.currentTime = 0; // Reset the audio
-          notification.close(); // Close the notification
-        };
+      // if (!isMobileBrowser()) {
+      // Stop audio when notification is clicked (only on desktop)
+      notification.onclick = () => {
+        audio.pause();
+        audio.currentTime = 0; // Reset the audio
+        notification.close(); // Close the notification
+      };
 
-        // Stop audio when notification is closed manually (only on desktop)
-        notification.onclose = () => {
-          audio.pause();
-          audio.currentTime = 0; // Reset the audio
-        };
-      }
+      // Stop audio when notification is closed manually (only on desktop)
+      notification.onclose = () => {
+        audio.pause();
+        audio.currentTime = 0; // Reset the audio
+      };
+      // }
     } else if (permission === "denied") {
       alert("***Notification permissions have been denied...!!***");
     } else {
@@ -93,18 +93,24 @@ export default function Home() {
 
   return (
     <div>
-      <p>with changes for mobile.. testing-1</p>
+      <p>with changes for mobile.. testing-2</p>
       <button
         onClick={() =>
           showChromeNotification(
             "MobiGuest",
             "Dining Order",
-            "There is an order from room 314 and ordered 6578"
+            "There is an order from room 314 and ordered 6578 ."
           )
         }
       >
         Notify me!
       </button>
+      <p>
+        Is Mobile Browser :{" "}
+        <span style={{ fontStyle: "italic", fontWeight: "bold" }}>
+          {isMobileBrowser().toString()}
+        </span>
+      </p>
     </div>
   );
 }
