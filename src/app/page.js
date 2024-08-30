@@ -5,7 +5,6 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // This code will only run on the client side
     const checkMobileBrowser = () => {
       if (typeof navigator !== "undefined") {
         return /Mobi|Android/i.test(navigator.userAgent);
@@ -33,7 +32,7 @@ export default function Home() {
   const playSound = () => {
     const audio = new Audio("/sounds/happy-bells.wav");
 
-    /* if (isMobile) {
+    if (isMobile) {
       let playCount = 0;
       const maxPlays = 2;
 
@@ -44,9 +43,9 @@ export default function Home() {
           audio.play(); // Play the sound again
         }
       });
-    } else { */
-    audio.loop = true;
-    //}
+    } else {
+      audio.loop = true;
+    }
 
     audio.play().catch((error) => {
       console.error("Sound playback was blocked:", error);
@@ -65,29 +64,29 @@ export default function Home() {
         icon: "/images/notiflogo.ico",
       };
 
-      //if (!isMobile) {
-      notificationOptions.requireInteraction = true; // Keeps the notification on screen until user interacts
-      // }
+      if (!isMobile) {
+        notificationOptions.requireInteraction = true; // Keeps the notification on screen until user interacts
+      }
 
       const notification = new Notification(
         `${windowTitle} : ${header}`,
         notificationOptions
       );
 
-      //if (!isMobile) {
-      // Stop audio when notification is clicked (only on desktop)
-      notification.onclick = () => {
-        audio.pause();
-        audio.currentTime = 0; // Reset the audio
-        notification.close(); // Close the notification
-      };
+      if (!isMobile) {
+        // Stop audio when notification is clicked (only on desktop)
+        notification.onclick = () => {
+          audio.pause();
+          audio.currentTime = 0; // Reset the audio
+          notification.close(); // Close the notification
+        };
 
-      // Stop audio when notification is closed manually (only on desktop)
-      notification.onclose = () => {
-        audio.pause();
-        audio.currentTime = 0; // Reset the audio
-      };
-      //}
+        // Stop audio when notification is closed manually (only on desktop)
+        notification.onclose = () => {
+          audio.pause();
+          audio.currentTime = 0; // Reset the audio
+        };
+      }
     } else if (permission === "denied") {
       alert("***Notification permissions have been denied...!!***");
     } else {
