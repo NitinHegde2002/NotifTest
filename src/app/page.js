@@ -1,7 +1,21 @@
 "use client";
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 
 export default function Home() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // This code will only run on the client side
+    const checkMobileBrowser = () => {
+      if (typeof navigator !== "undefined") {
+        return /Mobi|Android/i.test(navigator.userAgent);
+      }
+      return false;
+    };
+
+    setIsMobile(checkMobileBrowser());
+  }, []);
+
   const requestNotificationPermission = useCallback(() => {
     return new Promise((resolve) => {
       if (Notification.permission === "granted") {
@@ -16,14 +30,10 @@ export default function Home() {
     });
   }, []);
 
-  const isMobileBrowser = () => {
-    return /Mobi|Android/i.test(navigator.userAgent);
-  };
-
   const playSound = () => {
     const audio = new Audio("/sounds/happy-bells.wav");
 
-    /*  if (isMobileBrowser()) {
+    /* if (isMobile) {
       let playCount = 0;
       const maxPlays = 2;
 
@@ -34,9 +44,9 @@ export default function Home() {
           audio.play(); // Play the sound again
         }
       });
-   } else { */
+    } else { */
     audio.loop = true;
-    // }
+    //}
 
     audio.play().catch((error) => {
       console.error("Sound playback was blocked:", error);
@@ -55,8 +65,7 @@ export default function Home() {
         icon: "/images/notiflogo.ico",
       };
 
-      // Modify notification for desktop browsers
-      // if (!isMobileBrowser()) {
+      //if (!isMobile) {
       notificationOptions.requireInteraction = true; // Keeps the notification on screen until user interacts
       // }
 
@@ -65,7 +74,7 @@ export default function Home() {
         notificationOptions
       );
 
-      // if (!isMobileBrowser()) {
+      //if (!isMobile) {
       // Stop audio when notification is clicked (only on desktop)
       notification.onclick = () => {
         audio.pause();
@@ -78,7 +87,7 @@ export default function Home() {
         audio.pause();
         audio.currentTime = 0; // Reset the audio
       };
-      // }
+      //}
     } else if (permission === "denied") {
       alert("***Notification permissions have been denied...!!***");
     } else {
@@ -106,9 +115,9 @@ export default function Home() {
         Notify me!
       </button>
       <p>
-        Is Mobile Browser :{" "}
+        Is Mobile Browser :
         <span style={{ fontStyle: "italic", fontWeight: "bold" }}>
-          {isMobileBrowser().toString()}
+          {isMobile.toString()}
         </span>
       </p>
     </div>
