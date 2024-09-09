@@ -14,6 +14,19 @@
       "src": "/image/icon.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/image/icon2.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/img1.jpg",
+      "sizes": "1921x988",
+      "type": "image/jpg",
+      "form_factor": "wide"
     }
   ]
 }
