@@ -11,12 +11,12 @@
   "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/image/notiflogo1.png",
+      "src": "/image/notiflogo-2.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/image/notiflogo.png",
+      "src": "/image/notiflogo-1.png",
       "sizes": "192x192",
       "type": "image/png"
     }
