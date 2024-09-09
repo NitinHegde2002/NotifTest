@@ -7,7 +7,7 @@
   "orientation": "any",
   "scope": "/",
   "short_name": "notif-test-delta.vercel",
-  "start_url": "notif-test-delta.vercel.app",
+  "start_url": "./",
   "theme_color": "#ffffff",
   "icons": [
     {
